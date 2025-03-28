@@ -98,8 +98,8 @@ BROIP has evolved through major milestones:
 
 ### **1. Clone the repo**  
 ```bash
-git clone https://github.com/mojomast/broipsimulator.git
-cd broipsimulator
+git clone https://github.com/mojomast/broip_simulator.git
+cd broip_simulator
 ```
 
 ### **2. Install dependencies**  
