@@ -1,6 +1,3 @@
-Here’s a more polished, engaging, and detailed version of your README with improved formatting, visuals, and additional context:
-
----
 
 # 🌿💨 BROIP Simulator: *Bong Rip Over IP Protocol*  
 
