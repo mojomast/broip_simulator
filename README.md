@@ -46,7 +46,7 @@ The BROIP protocol has "evolved" through several fictional versions, each more a
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/broipsimulator.git
+   git clone https://github.com/mojomast/broipsimulator.git
    cd broipsimulator
    ```
 
