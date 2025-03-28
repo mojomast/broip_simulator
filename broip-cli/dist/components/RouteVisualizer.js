@@ -1,41 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Text } from './common';
-import { useInput } from 'ink';
-import { RouteNode, Route, NetworkGraph } from '../utils/routeTypes';
-
-interface RouteVisualizerProps {
-    onReturn: () => void;
-    network: NetworkGraph;
-    onUpdateNetwork: (network: NetworkGraph) => void;
-}
-
-const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
-    onReturn,
-    network,
-    onUpdateNetwork,
-}) => {
-    const [selectedNode, setSelectedNode] = useState<string | null>(null);
-    const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-    const [mode, setMode] = useState<'VIEW' | 'EDIT' | 'ADD' | 'DELETE'>('VIEW');
-    const [message, setMessage] = useState('');
-    const [activeRouteIndex, setActiveRouteIndex] = useState<number | null>(null);
-    
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importStar(require("react"));
+const ink_1 = require("ink");
+const RouteVisualizer = ({ onReturn, network, onUpdateNetwork, }) => {
+    const [selectedNode, setSelectedNode] = (0, react_1.useState)(null);
+    const [cursorPos, setCursorPos] = (0, react_1.useState)({ x: 0, y: 0 });
+    const [mode, setMode] = (0, react_1.useState)('VIEW');
+    const [message, setMessage] = (0, react_1.useState)('');
+    const [activeRouteIndex, setActiveRouteIndex] = (0, react_1.useState)(null);
     const GRID_WIDTH = 40;
     const GRID_HEIGHT = 20;
-
     // Initialize with the first route as active if available
-    useEffect(() => {
+    (0, react_1.useEffect)(() => {
         if (network.routes.length > 0 && activeRouteIndex === null) {
             setActiveRouteIndex(0);
         }
     }, [network.routes]);
-
-    useInput((input, key) => {
+    (0, ink_1.useInput)((input, key) => {
         if (input === 'q') {
             onReturn();
             return;
         }
-
         if (mode === 'VIEW') {
             switch (input) {
                 case 'e':
@@ -53,61 +61,56 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                 case 'r':
                     // Cycle through routes
                     if (network.routes.length > 0) {
-                        setActiveRouteIndex((prev: number | null) => 
-                            prev === null ? 0 : (prev + 1) % network.routes.length
-                        );
+                        setActiveRouteIndex(prev => prev === null ? 0 : (prev + 1) % network.routes.length);
                     }
                     break;
                 case 'n':
                     createNewRouteFromSelectedNodes();
                     break;
             }
-        } else if (input === 'v') {
+        }
+        else if (input === 'v') {
             // Return to view mode from any other mode
             setMode('VIEW');
             setMessage('VIEW MODE: Press (e)dit, (a)dd node, (d)elete, (r) cycle routes, (n)ew route');
             setSelectedNode(null);
         }
-
         if (key.upArrow) {
-            setCursorPos((prev: { x: number, y: number }) => ({ ...prev, y: Math.max(0, prev.y - 1) }));
+            setCursorPos(prev => ({ ...prev, y: Math.max(0, prev.y - 1) }));
         }
         if (key.downArrow) {
-            setCursorPos((prev: { x: number, y: number }) => ({ ...prev, y: Math.min(GRID_HEIGHT - 1, prev.y + 1) }));
+            setCursorPos(prev => ({ ...prev, y: Math.min(GRID_HEIGHT - 1, prev.y + 1) }));
         }
         if (key.leftArrow) {
-            setCursorPos((prev: { x: number, y: number }) => ({ ...prev, x: Math.max(0, prev.x - 1) }));
+            setCursorPos(prev => ({ ...prev, x: Math.max(0, prev.x - 1) }));
         }
         if (key.rightArrow) {
-            setCursorPos((prev: { x: number, y: number }) => ({ ...prev, x: Math.min(GRID_WIDTH - 1, prev.x + 1) }));
+            setCursorPos(prev => ({ ...prev, x: Math.min(GRID_WIDTH - 1, prev.x + 1) }));
         }
-
         if (input === ' ') {
             handleSpacePress();
         }
     });
-
     const handleSpacePress = () => {
         if (mode === 'ADD') {
             addNewNode();
-        } else if (mode === 'EDIT') {
+        }
+        else if (mode === 'EDIT') {
             handleNodeSelection();
-        } else if (mode === 'DELETE') {
+        }
+        else if (mode === 'DELETE') {
             deleteNodeAtCursor();
         }
     };
-
     const addNewNode = () => {
         // Check if position is already occupied
         if (findNodeAtPosition(cursorPos)) {
             setMessage('Position already occupied by another node!');
             return;
         }
-
-        const nodeTypes: Array<RouteNode['type']> = ['BONG', 'PIPE', 'DAB_RIG', 'ROUTER', 'ENDPOINT'];
+        const nodeTypes = ['BONG', 'PIPE', 'DAB_RIG', 'ROUTER', 'ENDPOINT'];
         const randomType = nodeTypes[Math.floor(Math.random() * nodeTypes.length)];
-        
-        const newNode: RouteNode = {
+        const newNode = {
             id: Math.random().toString(36).substr(2, 9),
             name: `${randomType}-${Math.floor(Math.random() * 1000)}`,
             type: randomType,
@@ -121,17 +124,14 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                 percolation: Math.floor(Math.random() * 100),
             }
         };
-
         const updatedNodes = new Map(network.nodes);
         updatedNodes.set(newNode.id, newNode);
         onUpdateNetwork({
             ...network,
             nodes: updatedNodes
         });
-        
         setMessage(`Added new ${randomType} node at (${cursorPos.x},${cursorPos.y})`);
     };
-
     const handleNodeSelection = () => {
         const nodeAtCursor = findNodeAtPosition(cursorPos);
         if (nodeAtCursor) {
@@ -151,26 +151,27 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                             nodes: updatedNodes
                         });
                         setMessage(`Connected ${node1.name} to ${node2.name}`);
-                    } else {
+                    }
+                    else {
                         setMessage('Nodes are already connected!');
                     }
                 }
                 setSelectedNode(null);
-            } else {
+            }
+            else {
                 setSelectedNode(nodeAtCursor.id);
                 setMessage(`Selected ${nodeAtCursor.name} (${nodeAtCursor.type})`);
             }
-        } else {
+        }
+        else {
             setMessage('No node at cursor position');
         }
     };
-
     const deleteNodeAtCursor = () => {
         const nodeAtCursor = findNodeAtPosition(cursorPos);
         if (nodeAtCursor) {
             // Remove all connections to this node
             const updatedNodes = new Map(network.nodes);
-            
             // Remove this node from all other nodes' connections
             updatedNodes.forEach(node => {
                 if (node.connections.includes(nodeAtCursor.id)) {
@@ -178,55 +179,48 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                     updatedNodes.set(node.id, node);
                 }
             });
-            
             // Delete the node itself
             updatedNodes.delete(nodeAtCursor.id);
-            
             // Update routes to remove this node
-            const updatedRoutes = network.routes.filter(route => 
-                !route.nodes.includes(nodeAtCursor.id)
-            );
-            
+            const updatedRoutes = network.routes.filter(route => !route.nodes.includes(nodeAtCursor.id));
             onUpdateNetwork({
                 nodes: updatedNodes,
                 routes: updatedRoutes,
                 activeRoute: network.activeRoute
             });
-            
             setMessage(`Deleted node ${nodeAtCursor.name}`);
             if (selectedNode === nodeAtCursor.id) {
                 setSelectedNode(null);
             }
-        } else {
+        }
+        else {
             setMessage('No node at cursor position');
         }
     };
-
     const createNewRouteFromSelectedNodes = () => {
         // Prompt for start and end nodes
         setMessage('Select start node (press space)');
-        let startNodeId: string | null = null;
-        let endNodeId: string | null = null;
-        
+        let startNodeId = null;
+        let endNodeId = null;
         // This is simplified - in a real implementation you'd need a more robust UI flow
         const nodeAtCursor = findNodeAtPosition(cursorPos);
         if (nodeAtCursor) {
             if (!startNodeId) {
                 startNodeId = nodeAtCursor.id;
                 setMessage('Now select end node (press space)');
-            } else {
+            }
+            else {
                 endNodeId = nodeAtCursor.id;
-                
                 if (startNodeId && endNodeId) {
                     const startNode = network.nodes.get(startNodeId);
                     const endNode = network.nodes.get(endNodeId);
-                    
                     if (startNode && endNode) {
                         const path = calculateRoute(startNode, endNode);
                         if (path.length > 0) {
                             const newRoute = createRoute(startNodeId, endNodeId);
                             setMessage(`Created new route: ${newRoute.name}`);
-                        } else {
+                        }
+                        else {
                             setMessage('No valid path between nodes');
                         }
                     }
@@ -234,21 +228,16 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
             }
         }
     };
-
-    const calculateRoute = (start: RouteNode, end: RouteNode): string[] => {
-        const visited = new Set<string>();
-        const queue: { node: RouteNode; path: string[] }[] = [{ node: start, path: [start.id] }];
-        
+    const calculateRoute = (start, end) => {
+        const visited = new Set();
+        const queue = [{ node: start, path: [start.id] }];
         while (queue.length > 0) {
-            const { node, path } = queue.shift()!;
-            
+            const { node, path } = queue.shift();
             if (node.id === end.id) {
                 return path;
             }
-            
             if (!visited.has(node.id)) {
                 visited.add(node.id);
-                
                 for (const connId of node.connections) {
                     const nextNode = network.nodes.get(connId);
                     if (nextNode && !visited.has(nextNode.id)) {
@@ -260,15 +249,12 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                 }
             }
         }
-        
         return [];
     };
-
-    const createRoute = (start: string, end: string): Route => {
+    const createRoute = (start, end) => {
         const startNode = network.nodes.get(start);
         const endNode = network.nodes.get(end);
-        
-        let route: Route = {
+        let route = {
             id: Math.random().toString(36).substr(2, 9),
             name: 'Invalid Route',
             nodes: [],
@@ -280,7 +266,6 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                 reliability: 0
             }
         };
-        
         if (startNode && endNode) {
             const path = calculateRoute(startNode, endNode);
             if (path.length > 0) {
@@ -288,7 +273,6 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                 let totalLatency = 0;
                 let totalMilkDensity = 0;
                 let nodeCount = 0;
-                
                 for (const nodeId of path) {
                     const node = network.nodes.get(nodeId);
                     if (node) {
@@ -297,7 +281,6 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                         nodeCount++;
                     }
                 }
-                
                 route = {
                     id: Math.random().toString(36).substr(2, 9),
                     name: `${startNode.name} → ${endNode.name}`,
@@ -310,23 +293,19 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
                         reliability: 100 - (path.length * 5) // Longer routes are less reliable
                     }
                 };
-                
                 // Add route to network
                 onUpdateNetwork({
                     ...network,
                     routes: [...network.routes, route],
                     activeRoute: route.id
                 });
-                
                 // Update active route index to show the new route
                 setActiveRouteIndex(network.routes.length);
             }
         }
-        
         return route;
     };
-
-    const findNodeAtPosition = (pos: { x: number; y: number }): RouteNode | null => {
+    const findNodeAtPosition = (pos) => {
         for (const node of network.nodes.values()) {
             if (node.coordinates.x === pos.x && node.coordinates.y === pos.y) {
                 return node;
@@ -334,8 +313,7 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
         }
         return null;
     };
-
-    const getNodeSymbol = (node: RouteNode): string => {
+    const getNodeSymbol = (node) => {
         switch (node.type) {
             case 'BONG': return '🌿';
             case 'PIPE': return '📏';
@@ -345,8 +323,7 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
             default: return '◉';
         }
     };
-
-    const getStatusColor = (status: string): string => {
+    const getStatusColor = (status) => {
         switch (status) {
             case 'ACTIVE': return 'green';
             case 'INACTIVE': return 'red';
@@ -354,168 +331,129 @@ const RouteVisualizer: React.FC<RouteVisualizerProps> = ({
             default: return 'white';
         }
     };
-
-    const isNodeInActiveRoute = (nodeId: string): boolean => {
+    const isNodeInActiveRoute = (nodeId) => {
         if (activeRouteIndex === null || activeRouteIndex >= network.routes.length) {
             return false;
         }
         return network.routes[activeRouteIndex].nodes.includes(nodeId);
     };
-
-    const isConnectionInActiveRoute = (node1Id: string, node2Id: string): boolean => {
+    const isConnectionInActiveRoute = (node1Id, node2Id) => {
         if (activeRouteIndex === null || activeRouteIndex >= network.routes.length) {
             return false;
         }
-        
         const route = network.routes[activeRouteIndex];
         const nodes = route.nodes;
-        
         for (let i = 0; i < nodes.length - 1; i++) {
-            if ((nodes[i] === node1Id && nodes[i + 1] === node2Id) || 
+            if ((nodes[i] === node1Id && nodes[i + 1] === node2Id) ||
                 (nodes[i] === node2Id && nodes[i + 1] === node1Id)) {
                 return true;
             }
         }
-        
         return false;
     };
-
     const renderGrid = () => {
-        const grid: JSX.Element[] = [];
-
+        const grid = [];
         for (let y = 0; y < GRID_HEIGHT; y++) {
-            const row: JSX.Element[] = [];
-            
+            const row = [];
             for (let x = 0; x < GRID_WIDTH; x++) {
                 const nodeAtPos = findNodeAtPosition({ x, y });
-                
                 if (nodeAtPos) {
                     // Render a node
                     const isInActiveRoute = isNodeInActiveRoute(nodeAtPos.id);
-                    let bgColor: string | undefined = undefined;
-                    
+                    let bgColor = undefined;
                     if (selectedNode === nodeAtPos.id) {
                         bgColor = 'yellow';
-                    } else if (isInActiveRoute) {
+                    }
+                    else if (isInActiveRoute) {
                         bgColor = 'cyan';
                     }
-                    
-                    row.push(
-                        <Text 
-                            key={`node-${x}-${y}`}
-                            color={getStatusColor(nodeAtPos.status)}
-                            backgroundColor={bgColor}
-                        >
-                            {getNodeSymbol(nodeAtPos)}
-                        </Text>
-                    );
-                } else {
+                    row.push(react_1.default.createElement(ink_1.Text, { key: `node-${x}-${y}`, color: getStatusColor(nodeAtPos.status), backgroundColor: bgColor }, getNodeSymbol(nodeAtPos)));
+                }
+                else {
                     // Check if we need to render a connection here
                     let hasConnection = false;
                     let isRouteConnection = false;
-                    
                     // Complex connection rendering logic would go here
                     // For simplicity, we'll just render cursor or empty space
-                    
                     if (x === cursorPos.x && y === cursorPos.y) {
-                        row.push(<Text key={`cursor-${x}-${y}`} color="magenta">+</Text>);
-                    } else {
-                        row.push(<Text key={`empty-${x}-${y}`}> </Text>);
+                        row.push(react_1.default.createElement(ink_1.Text, { key: `cursor-${x}-${y}`, color: "magenta" }, "+"));
+                    }
+                    else {
+                        row.push(react_1.default.createElement(ink_1.Text, { key: `empty-${x}-${y}` }, " "));
                     }
                 }
             }
-            
-            grid.push(
-                <Box key={`row-${y}`}>
-                    {row}
-                </Box>
-            );
+            grid.push(react_1.default.createElement(ink_1.Box, { key: `row-${y}` }, row));
         }
-
         // Render node connections
         for (const node of network.nodes.values()) {
             for (const connId of node.connections) {
                 const targetNode = network.nodes.get(connId);
                 if (targetNode) {
                     const isInRoute = isConnectionInActiveRoute(node.id, targetNode.id);
-                    
                     // We'd need more complex rendering logic here for proper connections
                     // This is simplified
                 }
             }
         }
-
         return grid;
     };
-
     const renderRouteInfo = () => {
         if (activeRouteIndex === null || network.routes.length === 0) {
-            return <Text>No active route selected</Text>;
+            return react_1.default.createElement(ink_1.Text, null, "No active route selected");
         }
-        
         const route = network.routes[activeRouteIndex];
-        return (
-            <Box flexDirection="column" marginTop={1} borderStyle="single">
-                <Text bold>Route: {route.name}</Text>
-                <Text>Status: <Text color={route.status === 'ACTIVE' ? 'green' : 'red'}>{route.status}</Text></Text>
-                <Text>Metrics:</Text>
-                <Text> - Latency: <Text color="yellow">{route.metrics.totalLatency.toFixed(0)} ms</Text></Text>
-                <Text> - Density: <Text color="cyan">{route.metrics.avgMilkDensity.toFixed(1)}%</Text></Text>
-                <Text> - Hops: {route.metrics.hopCount}</Text>
-                <Text> - Reliability: <Text color={route.metrics.reliability > 80 ? 'green' : 'red'}>
-                    {route.metrics.reliability.toFixed(1)}%
-                </Text></Text>
-            </Box>
-        );
+        return (react_1.default.createElement(ink_1.Box, { flexDirection: "column", marginTop: 1, borderStyle: "single" },
+            react_1.default.createElement(ink_1.Text, { bold: true },
+                "Route: ",
+                route.name),
+            react_1.default.createElement(ink_1.Text, null,
+                "Status: ",
+                react_1.default.createElement(ink_1.Text, { color: route.status === 'ACTIVE' ? 'green' : 'red' }, route.status)),
+            react_1.default.createElement(ink_1.Text, null, "Metrics:"),
+            react_1.default.createElement(ink_1.Text, null,
+                " - Latency: ",
+                react_1.default.createElement(ink_1.Text, { color: "yellow" },
+                    route.metrics.totalLatency.toFixed(0),
+                    " ms")),
+            react_1.default.createElement(ink_1.Text, null,
+                " - Density: ",
+                react_1.default.createElement(ink_1.Text, { color: "cyan" },
+                    route.metrics.avgMilkDensity.toFixed(1),
+                    "%")),
+            react_1.default.createElement(ink_1.Text, null,
+                " - Hops: ",
+                route.metrics.hopCount),
+            react_1.default.createElement(ink_1.Text, null,
+                " - Reliability: ",
+                react_1.default.createElement(ink_1.Text, { color: route.metrics.reliability > 80 ? 'green' : 'red' },
+                    route.metrics.reliability.toFixed(1),
+                    "%"))));
     };
-
-    const renderLegend = () => (
-        <Box flexDirection="column" marginTop={1} borderStyle="single">
-            <Text bold>Controls:</Text>
-            <Text>Arrows: Move cursor</Text>
-            <Text>Space: Select/place</Text>
-            <Text>(v)iew, (e)dit, (a)dd, (d)elete modes</Text>
-            <Text>(r)otate routes, (n)ew route, (q)uit</Text>
-            <Box marginTop={1}>
-                <Text bold>Node Types: </Text>
-                <Text>🌿 BONG </Text>
-                <Text>📏 PIPE </Text>
-                <Text>💎 DAB_RIG </Text>
-                <Text>🔄 ROUTER </Text>
-                <Text>🎯 ENDPOINT</Text>
-            </Box>
-        </Box>
-    );
-
-    return (
-        <Box flexDirection="column">
-            <Box marginBottom={1}>
-                <Text bold color="green">BROIP Network Visualizer v4.20</Text>
-                <Text> | </Text>
-                <Text>Mode: </Text>
-                <Text color="yellow">{mode}</Text>
-            </Box>
-
-            {message && (
-                <Box marginBottom={1} borderStyle="single" paddingX={1}>
-                    <Text color="cyan">{message}</Text>
-                </Box>
-            )}
-
-            <Box flexDirection="column" borderStyle="single">
-                {renderGrid()}
-            </Box>
-
-            <Box flexDirection="row" marginTop={1}>
-                <Box flexDirection="column" width="60%">
-                    {renderRouteInfo()}
-                </Box>
-                <Box flexDirection="column" marginLeft={2} width="40%">
-                    {renderLegend()}
-                </Box>
-            </Box>
-        </Box>
-    );
+    const renderLegend = () => (react_1.default.createElement(ink_1.Box, { flexDirection: "column", marginTop: 1, borderStyle: "single" },
+        react_1.default.createElement(ink_1.Text, { bold: true }, "Controls:"),
+        react_1.default.createElement(ink_1.Text, null, "Arrows: Move cursor"),
+        react_1.default.createElement(ink_1.Text, null, "Space: Select/place"),
+        react_1.default.createElement(ink_1.Text, null, "(v)iew, (e)dit, (a)dd, (d)elete modes"),
+        react_1.default.createElement(ink_1.Text, null, "(r)otate routes, (n)ew route, (q)uit"),
+        react_1.default.createElement(ink_1.Box, { marginTop: 1 },
+            react_1.default.createElement(ink_1.Text, { bold: true }, "Node Types: "),
+            react_1.default.createElement(ink_1.Text, null, "\uD83C\uDF3F BONG "),
+            react_1.default.createElement(ink_1.Text, null, "\uD83D\uDCCF PIPE "),
+            react_1.default.createElement(ink_1.Text, null, "\uD83D\uDC8E DAB_RIG "),
+            react_1.default.createElement(ink_1.Text, null, "\uD83D\uDD04 ROUTER "),
+            react_1.default.createElement(ink_1.Text, null, "\uD83C\uDFAF ENDPOINT"))));
+    return (react_1.default.createElement(ink_1.Box, { flexDirection: "column" },
+        react_1.default.createElement(ink_1.Box, { marginBottom: 1 },
+            react_1.default.createElement(ink_1.Text, { bold: true, color: "green" }, "BROIP Network Visualizer v4.20"),
+            react_1.default.createElement(ink_1.Text, null, " | "),
+            react_1.default.createElement(ink_1.Text, null, "Mode: "),
+            react_1.default.createElement(ink_1.Text, { color: "yellow" }, mode)),
+        message && (react_1.default.createElement(ink_1.Box, { marginBottom: 1, borderStyle: "single", paddingX: 1 },
+            react_1.default.createElement(ink_1.Text, { color: "cyan" }, message))),
+        react_1.default.createElement(ink_1.Box, { flexDirection: "column", borderStyle: "single" }, renderGrid()),
+        react_1.default.createElement(ink_1.Box, { flexDirection: "row", marginTop: 1 },
+            react_1.default.createElement(ink_1.Box, { flexDirection: "column", width: "60%" }, renderRouteInfo()),
+            react_1.default.createElement(ink_1.Box, { flexDirection: "column", marginLeft: 2, width: "40%" }, renderLegend()))));
 };
-
-export default RouteVisualizer;
+exports.default = RouteVisualizer;

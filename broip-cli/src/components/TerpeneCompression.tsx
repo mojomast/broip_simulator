@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text } from './common';
+import { useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
 import { useUser } from '../utils/UserContext';

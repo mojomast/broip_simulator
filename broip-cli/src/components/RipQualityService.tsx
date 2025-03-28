@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text } from './common';
+import { useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
 import { useUser } from '../utils/UserContext';
@@ -35,6 +36,40 @@ interface ActiveSession {
 const RipQualityService: React.FC<RipQualityServiceProps> = ({ onReturn }) => {
     const { profile, updateProfile } = useUser();
     const [activeScreen, setActiveScreen] = useState<'MENU' | 'MANAGE' | 'UPGRADE' | 'STATS'>('MENU');
+    
+    const serviceTiers: ServiceTier[] = [
+        {
+            id: 'casual',
+            name: 'Casual Cloud',
+            description: 'Balanced latency and fidelity for everyday rips',
+            color: 'blue',
+            latency: 50,
+            fidelity: 70,
+            reliability: 85,
+            price: 0
+        },
+        {
+            id: 'medical',
+            name: 'Medical-Grade',
+            description: 'Lossless terpene data transmission for therapeutic use',
+            color: 'green',
+            latency: 30,
+            fidelity: 90,
+            reliability: 95,
+            price: 9.99
+        },
+        {
+            id: 'dab',
+            name: 'Dab Storm',
+            description: 'Maximum potency with minimal packet loss for power users',
+            color: 'yellow',
+            latency: 10,
+            fidelity: 99,
+            reliability: 99,
+            price: 49.99
+        }
+    ];
+    
     const [selectedTier, setSelectedTier] = useState<ServiceTier>(serviceTiers[0]);
     const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([]);
     const [selectedSession, setSelectedSession] = useState<string | null>(null);
@@ -46,39 +81,6 @@ const RipQualityService: React.FC<RipQualityServiceProps> = ({ onReturn }) => {
             createRandomSession();
         }
     }, [activeSessions]);
-
-    const serviceTiers: ServiceTier[] = [
-        {
-            id: 'casual',
-            name: 'Casual Cloud',
-            description: 'Balanced latency and fidelity for everyday rips',
-            color: 'blue',
-            latency: 45,
-            fidelity: 85,
-            reliability: 92,
-            price: 0
-        },
-        {
-            id: 'medical',
-            name: 'Medical-Grade',
-            description: 'Lossless terpene data transmission, prioritized routes',
-            color: 'green',
-            latency: 25,
-            fidelity: 98,
-            reliability: 99,
-            price: 50
-        },
-        {
-            id: 'dabstorm',
-            name: 'Dab Storm',
-            description: 'Maximum potency, enterprise-level throughput',
-            color: 'magenta',
-            latency: 10,
-            fidelity: 99.9,
-            reliability: 99.9,
-            price: 200
-        }
-    ];
 
     const menuItems = [
         {
@@ -458,7 +460,7 @@ const RipQualityService: React.FC<RipQualityServiceProps> = ({ onReturn }) => {
                 <Box flexDirection="column" borderStyle="single" paddingX={2} paddingY={1}>
                     <Text bold>Recommendation</Text>
                     <Box marginY={1}>
-                        {selectedTier.id === 'dabstorm' ? (
+                        {selectedTier.id === 'dab' ? (
                             <Text color="green">You're already on our top tier service! Enjoy maximum rip quality.</Text>
                         ) : (
                             <Text>Upgrade to {serviceTiers.find(t => t.id !== selectedTier.id)?.name} for {selectedTier.id === 'casual' ? '13ms lower latency' : '15ms lower latency and 99.9% reliability'}</Text>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, useInput } from 'ink';
+import { useInput } from 'ink';
+import { Box, Text } from './common';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
 import { NetworkGraph, Route, RouteNode } from '../utils/routeTypes';

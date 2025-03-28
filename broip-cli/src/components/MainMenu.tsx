@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Box, Text} from 'ink';
+import { Box, Text } from './common';
 import SelectInput from 'ink-select-input';
 import {MenuOption} from '../utils/types';
 import RipInitiator from './RipInitiator';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text } from './common';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
 import { useUser } from '../utils/UserContext';
@@ -451,9 +451,9 @@ const RipAPI: React.FC<RipAPIProps> = ({ onReturn }) => {
                         <Box marginY={1} paddingX={2} flexDirection="column">
                             <Text color="cyan">import requests</Text>
                             <Text color="cyan">api_key = 'YOUR_API_KEY'</Text>
-                            <Text color="cyan">headers = {{</Text>
-                            <Text color="cyan">    'Authorization': f'Bearer {{api_key}}'</Text>
-                            <Text color="cyan">}}</Text>
+                            <Text color="cyan">headers = {`{`}</Text>
+                            <Text color="cyan">    'Authorization': f'Bearer {`{api_key}`}'</Text>
+                            <Text color="cyan">{`}`}</Text>
                             <Text color="cyan">response = requests.get('https://api.broip.net/api/v1/sessions/sess_1a2b3c4d', headers=headers)</Text>
                             <Text color="cyan">print(response.json())</Text>
                         </Box>
@@ -463,15 +463,15 @@ const RipAPI: React.FC<RipAPIProps> = ({ onReturn }) => {
                         <Text bold>Using JavaScript (fetch)</Text>
                         <Box marginY={1} paddingX={2} flexDirection="column">
                             <Text color="cyan">const apiKey = 'YOUR_API_KEY';</Text>
-                            <Text color="cyan">fetch('https://api.broip.net/api/v1/sessions/sess_1a2b3c4d', {{</Text>
+                            <Text color="cyan">fetch('https://api.broip.net/api/v1/sessions/sess_1a2b3c4d', {`{`}</Text>
                             <Text color="cyan">  method: 'GET',</Text>
-                            <Text color="cyan">  headers: {{</Text>
-                            <Text color="cyan">    'Authorization': `Bearer ${{apiKey}}`</Text>
-                            <Text color="cyan">  }}</Text>
-                            <Text color="cyan">}})</Text>
-                            <Text color="cyan">.then(response => response.json())</Text>
-                            <Text color="cyan">.then(data => console.log(data))</Text>
-                            <Text color="cyan">.catch(error => console.error('Error:', error));</Text>
+                            <Text color="cyan">  headers: {`{`}</Text>
+                            <Text color="cyan">    'Authorization': `Bearer ${`{apiKey}`}`</Text>
+                            <Text color="cyan">  {`}`}</Text>
+                            <Text color="cyan">{`}`})</Text>
+                            <Text color="cyan">.then(response {`=>`} response.json())</Text>
+                            <Text color="cyan">.then(data {`=>`} console.log(data))</Text>
+                            <Text color="cyan">.catch(error {`=>`} console.error('Error:', error));</Text>
                         </Box>
                     </Box>
                 </Box>
@@ -522,7 +522,7 @@ const RipAPI: React.FC<RipAPIProps> = ({ onReturn }) => {
                         <Box>
                             <Text bold>{apiKey.name}</Text>
                             <Text> (</Text>
-                            <Text color={apiKey.status === 'ACTIVE' ? 'green' : 'red'}>{apiKey.status}</Text>
+                            <Text color={apiKey.status === 'ACTIVE' ? "green" : "red"}>{apiKey.status}</Text>
                             <Text>)</Text>
                         </Box>
                         <Text selectable color="gray">Key: {apiKey.key}</Text>

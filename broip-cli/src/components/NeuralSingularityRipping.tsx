@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text } from 'ink';
+import { Box, Text } from './common';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
 import { useUser } from '../utils/UserContext';
@@ -427,7 +427,7 @@ const NeuralSingularityRipping: React.FC<NeuralSingularityRippingProps> = ({ onR
                     paddingX={2} 
                     paddingY={1} 
                     marginBottom={1}
-                    borderColor={selectedPattern === pattern.id ? 'cyan' : undefined}
+                    borderColor={selectedPattern === pattern.id ? "cyan" : undefined}
                 >
                     <Box>
                         <Text bold>{pattern.name}</Text>
